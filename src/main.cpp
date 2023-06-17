@@ -5,8 +5,8 @@
 #include <ArduinoJson.h>
 #include "WebInterface.h"
 
-const char* ssid = "Vodafone-1772";
-const char* password = "6t7RraRnau3e6M4T";
+const char* ssid = "ssid";
+const char* password = "password";
 WebServer server(80);
 String request;
 
