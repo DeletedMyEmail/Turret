@@ -46,14 +46,14 @@ void sendWebpage() {
 void hRotate() {
   hPos = server.arg("VALUE").toInt();
   Serial.println(hPos);
-  //hServo.write(hPos);
+  hServo.write(hPos);
   server.send(200, "text/plain", String(hPos));
 }
 
 void vRotate() {
   vPos = server.arg("VALUE").toInt();
   Serial.println(vPos);
-  //vServo.write(vPos);
+  vServo.write(vPos);
   server.send(200, "text/plain", String(vPos));
 }
 
@@ -71,8 +71,8 @@ void initWifi() {
 
 void initServer() {
   server.on("/", HTTP_GET, sendWebpage);
-  server.on("/h_slider", HTTP_PUT, hRotate);
-  server.on("/v_slider", HTTP_PUT, vRotate);
+  server.on("/h_pos", HTTP_PUT, hRotate);
+  server.on("/v_pos", HTTP_PUT, vRotate);
   server.on("/fire", HTTP_PUT, fire);
   server.begin();
 }
@@ -83,5 +83,7 @@ void initServos() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
   hServo.setPeriodHertz(50); 
-  hServo.attach(18, 500, 2500);
+  hServo.attach(19, 500, 2500);
+  vServo.setPeriodHertz(50); 
+  vServo.attach(18, 500, 2500);
 }
