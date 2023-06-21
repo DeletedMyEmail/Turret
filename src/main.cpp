@@ -5,8 +5,11 @@
 #include <ArduinoJson.h>
 #include "WebInterface.h"
 
-const char* ssid = "ssid";
-const char* password = "password";
+#define SERVO_PIN_1 18
+#define SERVO_PIN_2 19
+#define SSID "ssid"
+#define PASSWORD "password"
+
 WebServer server(80);
 String request;
 
@@ -14,9 +17,9 @@ unsigned long prevMillis;
 const long timeout = 6000;
 
 Servo hServo, vServo;
+bool auto_mode = false;
 int hPos = 0;
 int vPos = 0;
-bool auto_mode = false;
 
 void sendWebpage();
 void hRotate();
@@ -60,7 +63,7 @@ void vRotate() {
 void fire() {}
 
 void initWifi() {
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, PASSWORD);
   Serial.print("Connecting...");
   while (WiFi.status() != WL_CONNECTED) {
     delay(200);
@@ -83,7 +86,7 @@ void initServos() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
   hServo.setPeriodHertz(50); 
-  hServo.attach(19, 500, 2500);
+  hServo.attach(SERVO_PIN_1, 500, 2500);
   vServo.setPeriodHertz(50); 
-  vServo.attach(18, 500, 2500);
+  vServo.attach(SERVO_PIN_2, 500, 2500);
 }
