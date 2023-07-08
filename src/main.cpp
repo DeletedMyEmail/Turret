@@ -7,31 +7,28 @@
 
 #define SERVO_PIN_1 18
 #define SERVO_PIN_2 19
-#define SSID "ssid"
-#define PASSWORD "password"
+#define SSID ""
+#define PASSWORD ""
 
 WebServer server(80);
 String request;
 
-unsigned long prevMillis;
-const long timeout = 6000;
-
-Servo hServo, vServo;
+Servo servoX, servoY;
 bool auto_mode = false;
-int hPos = 0;
-int vPos = 0;
+int posX = 0;
+int posY = 0;
 
 void sendWebpage();
-void hRotate();
-void vRotate();
+void moveTurret();
+void enableAutoMode();
 void fire();
 void initWifi();
 void initServer();
 void initServos();
 
 void setup() {
-  Serial.begin(115200);
-  Serial.print("Connecting...");
+  Serial.begin(250000);
+  delay(1000);
   
   initWifi();
   initServer();
@@ -46,21 +43,24 @@ void sendWebpage() {
   server.send(200, "text/html", PAGE_HTML);
 }
 
-void hRotate() {
-  hPos = server.arg("VALUE").toInt();
-  Serial.println(hPos);
-  hServo.write(hPos);
-  server.send(200, "text/plain", String(hPos));
-}
+void moveTurret() {
+  String value = server.arg("VALUE");
+  
+  posX = value.substring(value.indexOf("x:")+2, value.indexOf(",")).toInt();
+  posY = value.substring(value.indexOf("y:")+2, value.indexOf("}")).toInt();
+  
+  servoX.write(posX);
+  servoY.write(posY);
 
-void vRotate() {
-  vPos = server.arg("VALUE").toInt();
-  Serial.println(vPos);
-  vServo.write(vPos);
-  server.send(200, "text/plain", String(vPos));
+  Serial.println("X: " + String(posX) + " Y: " + String(posY));
+  server.send(200, "text/plain", "OK");
 }
 
 void fire() {}
+
+void enableAutoMode() {
+  server.send(200, "text/plain", "OK");
+}
 
 void initWifi() {
   WiFi.begin(SSID, PASSWORD);
@@ -70,13 +70,14 @@ void initWifi() {
     Serial.print(".");
   }
   Serial.println();
+  Serial.println("Connected to the WiFi network. IP Address: " + WiFi.localIP().toString());
 }
 
 void initServer() {
   server.on("/", HTTP_GET, sendWebpage);
-  server.on("/h_pos", HTTP_PUT, hRotate);
-  server.on("/v_pos", HTTP_PUT, vRotate);
+  server.on("/move", HTTP_PUT, moveTurret);
   server.on("/fire", HTTP_PUT, fire);
+  server.on("/auto_mode", HTTP_PUT, enableAutoMode);
   server.begin();
 }
 
@@ -85,8 +86,8 @@ void initServos() {
   ESP32PWM::allocateTimer(1);
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
-  hServo.setPeriodHertz(50); 
-  hServo.attach(SERVO_PIN_1, 500, 2500);
-  vServo.setPeriodHertz(50); 
-  vServo.attach(SERVO_PIN_2, 500, 2500);
+  servoX.setPeriodHertz(50); 
+  servoX.attach(SERVO_PIN_1, 500, 2500);
+  servoY.setPeriodHertz(50); 
+  servoY.attach(SERVO_PIN_2, 500, 2500);
 }

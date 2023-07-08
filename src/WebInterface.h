@@ -1,14 +1,8 @@
 const char* PAGE_HTML = R"=====(
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="js-focus-visible">
 <title>Turret Interface</title>
     <style>
-    .fanrpmslider {
-      width: 30%;
-      height: 55px;
-      outline: none;
-      height: 25px;
-    }
     .bodytext {
       font-family: "Verdana", "Arial", sans-serif;
       font-size: 24px;
@@ -35,15 +29,10 @@ const char* PAGE_HTML = R"=====(
       line-height: 50px;
       padding-left: 20px;
     }
-  
-    .container {
-      max-width: 1800px;
-      margin: 0 auto;
-    }
     
   </style>
 
-<body style="background-color: #efefef" onload="process()">
+<body style="background-color: #efefef">
   
     <header>
       <div class="navbar fixed-top">
@@ -51,47 +40,52 @@ const char* PAGE_HTML = R"=====(
       </div>
     </header>
   
-    <main class="container" style="margin-top:70px">
-        <br>
-        <div class="bodytext">Horizontal Rotation<span id="fanrpm"></span></div>
-        <br>
-        <input type="range" class="fanrpmslider" min="0" max="180" value = "0" step="1" width = "0%" oninput="hRotate(this.value)"/>
-        <br>
-        <div class="bodytext">Vertical Rotation<span id="fanrpm"></span></div>
-        <br>
-        <input type="range" class="fanrpmslider" min="0" max="180" value = "0" step="1" width = "0%" oninput="vRotate(this.value)"/>
-        <br>
-        <button onclick="fireButton()">Fire</button>
-        <br>
-        <Radio onclick="autoButton()">Auto-Mode</Radio>
+    <main class="container" style="margin-top:70px; height: 100vh;" >
+        
     </main>
 
 </body>
 
 
 <script type = "text/javascript">
-    function fireButton() {
-      var xhttp = new XMLHttpRequest(); 
+    const throttle = 500
+    const start = (new Date).getTime()
+    let last = (new Date).getTime()
+
+    window.addEventListener("mousemove", function(event) {
+        const now = (new Date).getTime()
+
+        if ((now - last) < throttle) {
+            return
+        }
+        last = now
+
+        var x = event.clientX * (180 / window.innerWidth)
+        var y = event.clientY * (180 / window.innerHeight)
+        
+        sendCoordinates(Math.round(x), Math.round(y));
+    });
+    window.addEventListener("click", function(event) {
+        console.log("FIRE")
+        fire();
+    });
+
+    function fire() {
+      var xhttp = new XMLHttpRequest() 
        
-      xhttp.open("PUT", "fire", false);
-      xhttp.send();
+      xhttp.open("PUT", "fire", false)
+      xhttp.send()
     }
 
-    function autoButton(value) {
-      var xhttp = new XMLHttpRequest(); 
-      xhttp.open("PUT", "auto_mode", value);
-      xhttp.send(); 
+    function enableAutoMode(value) {
+      var xhttp = new XMLHttpRequest() 
+      xhttp.open("PUT", "auto_mode", value)
+      xhttp.send()
     }
     
-    function hRotate(value) {
+    function sendCoordinates(x, y) {
       var xhttp = new XMLHttpRequest();
-      xhttp.open("PUT", "h_pos?VALUE="+value, true);
-      xhttp.send();
-    }
-
-    function vRotate(value) {
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("PUT", "v_pos?VALUE="+value, true);
+      xhttp.open("PUT", "move?VALUE={x:" + x + ", y:" + y + "}", true);
       xhttp.send();
     }
   </script>
