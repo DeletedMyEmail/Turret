@@ -5,22 +5,24 @@
 #include <ArduinoJson.h>
 #include "WebInterface.h"
 
-#define SERVO_PIN_1 18
-#define SERVO_PIN_2 19
+#define RELAY_PIN 16
+#define SERVO_PIN_SHOT 17
+#define SERVO_PIN_X 18
+#define SERVO_PIN_Y 19
 #define SSID ""
 #define PASSWORD ""
 
 WebServer server(80);
 String request;
 
-Servo servoX, servoY;
+Servo servoX, servoY, servoShot;
 bool auto_mode = false;
-int posX = 0;
-int posY = 0;
+int posX = 90;
+int posY = 90;
 
 void sendWebpage();
 void moveTurret();
-void enableAutoMode();
+//void enableAutoMode();
 void fire();
 void initWifi();
 void initServer();
@@ -28,8 +30,8 @@ void initServos();
 
 void setup() {
   Serial.begin(250000);
-  delay(1000);
   
+  pinMode(RELAY_PIN, OUTPUT);
   initWifi();
   initServer();
   initServos();
@@ -56,11 +58,19 @@ void moveTurret() {
   server.send(200, "text/plain", "OK");
 }
 
-void fire() {}
-
-void enableAutoMode() {
-  server.send(200, "text/plain", "OK");
+void fire() {
+  servoShot.write(139);
+  digitalWrite(RELAY_PIN, HIGH);
+  delay(500);
+  servoShot.write(180);
+  delay(500);
+  digitalWrite(RELAY_PIN, LOW);
+  servoShot.write(139);
 }
+
+/*void enableAutoMode() {
+  server.send(200, "text/plain", "OK");
+}*/
 
 void initWifi() {
   WiFi.begin(SSID, PASSWORD);
@@ -77,7 +87,7 @@ void initServer() {
   server.on("/", HTTP_GET, sendWebpage);
   server.on("/move", HTTP_PUT, moveTurret);
   server.on("/fire", HTTP_PUT, fire);
-  server.on("/auto_mode", HTTP_PUT, enableAutoMode);
+  //server.on("/auto_mode", HTTP_PUT, enableAutoMode);
   server.begin();
 }
 
@@ -87,7 +97,10 @@ void initServos() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
   servoX.setPeriodHertz(50); 
-  servoX.attach(SERVO_PIN_1, 500, 2500);
+  servoX.attach(SERVO_PIN_X, 500, 2500);
   servoY.setPeriodHertz(50); 
-  servoY.attach(SERVO_PIN_2, 500, 2500);
+  servoY.attach(SERVO_PIN_Y, 500, 2500);
+  servoShot.setPeriodHertz(50); 
+  servoShot.attach(SERVO_PIN_SHOT, 500, 2500);
+  
 }

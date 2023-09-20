@@ -1,16 +1,9 @@
 const char* PAGE_HTML = R"=====(
+  
 <!DOCTYPE html>
 <html lang="en" class="js-focus-visible">
 <title>Turret Interface</title>
     <style>
-    .bodytext {
-      font-family: "Verdana", "Arial", sans-serif;
-      font-size: 24px;
-      text-align: left;
-      font-weight: light;
-      border-radius: 5px;
-      display:inline;
-    }
     .navbar {
       width: 100%;
       height: 50px;
@@ -29,42 +22,51 @@ const char* PAGE_HTML = R"=====(
       line-height: 50px;
       padding-left: 20px;
     }
+    .coords {
+      position: fixed;
+      height: 30px;
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 10px;
+      font-weight: bold;
+      line-height: 30px;
+      padding-right: 8px;
+    }
     
   </style>
 
 <body style="background-color: #efefef">
   
     <header>
-      <div class="navbar fixed-top">
+      <div class="navbar">
           <div class="navtitle">Turret Interface</div>  
       </div>
     </header>
-  
-    <main class="container" style="margin-top:70px; height: 100vh;" >
-        
-    </main>
 
+    <div class="coords" id="coords">
+      <div id="x">x: 0°</div>
+      <div id="y">y: 0°</div>
+    </div>
+  
 </body>
 
 
 <script type = "text/javascript">
-    const throttle = 500
-    const start = (new Date).getTime()
-    let last = (new Date).getTime()
+    document.getElementById("coords").setAttribute("style", "left: " + (window.innerWidth/2+15) + "px; top: " + (window.innerHeight/2-15) + "px");
 
     window.addEventListener("mousemove", function(event) {
-        const now = (new Date).getTime()
-
-        if ((now - last) < throttle) {
-            return
-        }
-        last = now
-
-        var x = event.clientX * (180 / window.innerWidth)
-        var y = event.clientY * (180 / window.innerHeight)
+        const x = event.clientX
+        const y = event.clientY 
         
-        sendCoordinates(Math.round(x), Math.round(y));
+        const x_degrees = (x / window.innerWidth) * 180 - 90
+        const y_degrees = -((y / window.innerHeight) * 180 - 90)
+
+        document.getElementById("coords").setAttribute("style", "left: " + (x+15) + "px; top: " + (y-15) + "px");
+        document.getElementById("x").innerHTML = "x: " + Math.round(x_degrees) + "°"
+        document.getElementById("y").innerHTML = "y: " + Math.round(y_degrees) + "°"
+
+        sendCoordinates(x_degrees+90, y_degrees+90);
     });
+
     window.addEventListener("click", function(event) {
         console.log("FIRE")
         fire();
@@ -84,6 +86,7 @@ const char* PAGE_HTML = R"=====(
     }
     
     function sendCoordinates(x, y) {
+      console.log("X: " + x + " Y: " + y)
       var xhttp = new XMLHttpRequest();
       xhttp.open("PUT", "move?VALUE={x:" + x + ", y:" + y + "}", true);
       xhttp.send();

@@ -10,7 +10,7 @@ The project was initializied via the VsCode extention PlatformIO. It's an easy w
 ## Requierements
 
 - ESP32 (e.g. NodeMCU-32s)
-- 2 servo motors
+- 3 servo motors
 - 3D Printer
 
 ## Wiring
