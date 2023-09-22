@@ -16,9 +16,9 @@ WebServer server(80);
 String request;
 
 Servo servoX, servoY, servoShot;
-bool auto_mode = false;
-int posX = 90;
-int posY = 90;
+//bool auto_mode = false;
+unsigned int posX = 90;
+unsigned int posY = 90;
 
 void sendWebpage();
 void moveTurret();
@@ -50,7 +50,8 @@ void moveTurret() {
   
   posX = value.substring(value.indexOf("x:")+2, value.indexOf(",")).toInt();
   posY = value.substring(value.indexOf("y:")+2, value.indexOf("}")).toInt();
-  
+  posY = posY < 10 ? 10 : posX > 170 ? 170 : posY;
+
   servoX.write(posX);
   servoY.write(posY);
 

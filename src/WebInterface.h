@@ -22,6 +22,15 @@ const char* PAGE_HTML = R"=====(
       line-height: 50px;
       padding-left: 20px;
     }
+    .movement-area {
+      position: absolute;
+      width: 80vw;
+      height: 70vh;
+      left: 10vw;
+      top: 20vh;
+      border: #3a3c48 3px solid;
+      cursor: move;
+    }
     .coords {
       position: fixed;
       height: 30px;
@@ -41,12 +50,13 @@ const char* PAGE_HTML = R"=====(
           <div class="navtitle">Turret Interface</div>  
       </div>
     </header>
-
-    <div class="coords" id="coords">
-      <div id="x">x: 0°</div>
-      <div id="y">y: 0°</div>
+    <div class="movement-area" id="move-area">
+      <div class="coords" id="coords">
+        <div id="x">x: 0°</div>
+        <div id="y">y: 0°</div>
+      </div>  
     </div>
-  
+    
 </body>
 
 
@@ -57,8 +67,16 @@ const char* PAGE_HTML = R"=====(
         const x = event.clientX
         const y = event.clientY 
         
-        const x_degrees = (x / window.innerWidth) * 180 - 90
-        const y_degrees = -((y / window.innerHeight) * 180 - 90)
+        const rect = document.getElementById("move-area").getBoundingClientRect(); 
+        var xPosition = x - rect.left - rect.width / 2; 
+        var yPosition = y - rect.top - rect.height / 2;
+
+        if (xPosition < -rect.width / 2 || xPosition > rect.width / 2 || yPosition > rect.height / 2 || yPosition < -rect.height / 2) {
+          return
+        }   
+
+        const x_degrees = (xPosition / rect.width) * 180
+        const y_degrees = (yPosition / rect.height) * -180
 
         document.getElementById("coords").setAttribute("style", "left: " + (x+15) + "px; top: " + (y-15) + "px");
         document.getElementById("x").innerHTML = "x: " + Math.round(x_degrees) + "°"
@@ -75,7 +93,7 @@ const char* PAGE_HTML = R"=====(
     function fire() {
       var xhttp = new XMLHttpRequest() 
        
-      xhttp.open("PUT", "fire", false)
+      xhttp.open("PUT", "fire", true)
       xhttp.send()
     }
 
