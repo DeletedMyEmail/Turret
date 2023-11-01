@@ -15,4 +15,4 @@ The project was initializied via the VsCode extention PlatformIO. It's an easy w
 - Mosfet (e.g. IRFZ44N)
 
 ## Schematic
-![Schematic_Turret](https://github.com/KaitoKunTatsu/Turret/assets/88390464/3f29a6de-e31e-4603-bd18-59877fe80e69)
+![Schematic_Turret](https://github.com/KaitoKunTatsu/Turret/assets/88390464/83625353-902d-4c76-9a71-df7056e1eec3)
