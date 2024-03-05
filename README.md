@@ -12,7 +12,7 @@ The project was initializied via the VsCode extention PlatformIO. It's an easy w
 - ESP32 (e.g. NodeMCU-32s)
 - 3 servo motors
 - 3D Printer
+- Mosfet (e.g. IRFZ44N)
 
-## Wiring
-
-## 3D Model
+## Schematic
+![Schematic_Turret](https://github.com/KaitoKunTatsu/Turret/assets/88390464/83625353-902d-4c76-9a71-df7056e1eec3)
