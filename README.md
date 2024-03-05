@@ -3,7 +3,7 @@
 ## About the Project
 
 ### Controls
-- Moving the cursor on the web-interface (running locally on currets ESP32) translates into horizontal and vertivcal turret movement
+- Moving the cursor on the web interface (which runs locally on turret's ESP32) is translated into a horizontal and vertical turret movement
 - Left-clicking fires a dart
 - the current roation is shown next to the cursor  
 
