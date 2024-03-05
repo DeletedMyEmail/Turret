@@ -1,5 +1,5 @@
 const char* PAGE_HTML = R"=====(
-  
+ 
 <!DOCTYPE html>
 <html lang="en" class="js-focus-visible">
 <title>Turret Interface</title>
@@ -29,7 +29,7 @@ const char* PAGE_HTML = R"=====(
       left: 10vw;
       top: 20vh;
       border: #3a3c48 3px solid;
-      cursor: move;
+      cursor: crosshair;
     }
     .coords {
       position: fixed;
@@ -63,10 +63,11 @@ const char* PAGE_HTML = R"=====(
 <script type = "text/javascript">
     document.getElementById("coords").setAttribute("style", "left: " + (window.innerWidth/2+15) + "px; top: " + (window.innerHeight/2-15) + "px");
 
+    var time = Date.now()
     window.addEventListener("mousemove", function(event) {
         const x = event.clientX
         const y = event.clientY 
-        
+      
         const rect = document.getElementById("move-area").getBoundingClientRect(); 
         var xPosition = x - rect.left - rect.width / 2; 
         var yPosition = y - rect.top - rect.height / 2;
@@ -81,12 +82,16 @@ const char* PAGE_HTML = R"=====(
         document.getElementById("coords").setAttribute("style", "left: " + (x+15) + "px; top: " + (y-15) + "px");
         document.getElementById("x").innerHTML = "x: " + Math.round(x_degrees) + "°"
         document.getElementById("y").innerHTML = "y: " + Math.round(y_degrees) + "°"
-
+    
+        if (Date.now() - time < 80) {
+          return
+        }
+        time = Date.now()    
+ 
         sendCoordinates(x_degrees+90, y_degrees+90);
     });
 
     window.addEventListener("click", function(event) {
-        console.log("FIRE")
         fire();
     });
 
@@ -104,7 +109,6 @@ const char* PAGE_HTML = R"=====(
     }
     
     function sendCoordinates(x, y) {
-      console.log("X: " + x + " Y: " + y)
       var xhttp = new XMLHttpRequest();
       xhttp.open("PUT", "move?VALUE={x:" + x + ", y:" + y + "}", true);
       xhttp.send();
