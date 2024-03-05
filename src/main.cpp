@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
-#include "ota-server.h"
-#include "WebInterface.h"
+#include "../include/ota-server.h"
+#include "../include/WebInterface.h"
 
 #define RELAY_PIN 16
 #define SERVO_PIN_SHOT 17
