@@ -29,7 +29,9 @@ void setup() {
   resetServos();
 }
 
-void loop() {}
+void loop() {
+  ElegantOTA.loop();
+}
 
 void resetServos() {
   servoX.write(90);

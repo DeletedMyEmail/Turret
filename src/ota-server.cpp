@@ -1,7 +1,8 @@
 #include "../include/ota-server.h"
+#include "WiFi.h"
 
-aos::WebServer::WebServer(uint16_t port) : asyncWebServer(port) {}
-aos::WebServer::WebServer(AsyncWebServer& server) : asyncWebServer(server) {}
+aos::WebServer::WebServer(const uint16_t port) : asyncWebServer(port) {}
+aos::WebServer::WebServer(const AsyncWebServer& server) : asyncWebServer(server) {}
 
 void aos::WebServer::initWifi(const char* ssid, const char* password) {
     WiFi.begin(ssid, password);
@@ -15,6 +16,6 @@ void aos::WebServer::initWifi(const char* ssid, const char* password) {
 
 void aos::WebServer::begin(const char* ssid, const char* password) {
     initWifi(ssid, password);
-    AsyncElegantOTA.begin(&asyncWebServer);
+    ElegantOTA.begin(&asyncWebServer);
     asyncWebServer.begin();
 }
